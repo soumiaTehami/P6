@@ -1,15 +1,18 @@
 const mongoose = require('mongoose');
+const User=mongoose.model("User",userSchema)
 const userSchema=new mongoose.Schema({
-  email:String,
-  password:String
+  email:{ type: String, required: true, unique: true },//unique email
+  password:{ type: String, required: true }//unique passeword
   
 })
-  const User=mongoose.model("User",userSchema)
-//database
-mongoose.connect("mongodb+srv://tehami:1988soumia@cluster0.uqmi5.mongodb.net/?retryWrites=true&w=majority", function(err) {
+
+
+// Connexion à la base de données avec mongoose
+mongoose.connect(`mongodb+srv://tehami:${MOT}@cluster0.uqmi5.mongodb.net/?retryWrites=true&w=majority`, function(err) {
     if (err) { throw err;
     }
     else { console.log("Connexion à MongoDB réussie !")}
   });
-  
-  module.exports={mongoose,User}
+ 
+
+  module.exports={mongoose, User}
