@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+
 const User=mongoose.model("User",userSchema)
 const userSchema=new mongoose.Schema({
   email:{ type: String, required: true, unique: true },//unique email
@@ -15,4 +16,4 @@ mongoose.connect(`mongodb+srv://tehami:${MOT}@cluster0.uqmi5.mongodb.net/?retryW
   });
  
 
-  module.exports={mongoose, User}
+  module.exports = mongoose.model('User', userSchema,mongoose);

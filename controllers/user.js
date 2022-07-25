@@ -1,13 +1,17 @@
+
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const { User }=require('../base')
+const userSchema=require('../models/usermodel')
+const mongoose = require('mongoose');
+const UserModel=mongoose.model("User",userSchema)
+
 
 //function login
 
 async function loginUser(req,res){
     const email=req.body.email
     const password=req.body.password
-    const user= await User.findOne({ email:email })
+    const user= await UserModel.findOne({ email:email })
     const passewordOk= await bcrypt.compare(password,user.password)
     if (!passewordOk){
       res.status(403).send({ message:"mot de passe incorrect" })
@@ -31,7 +35,7 @@ async function loginUser(req,res){
         const hashedpassword= await hashdpassword(password)
         console.log("password:",password)
         console.log("hashedpassword:",hashedpassword)
-        const user=new User({email:email,password:hashedpassword})
+        const user=new UserModel({email:email,password:hashedpassword})
         user
         .save()
         .then(()=> 
@@ -44,4 +48,4 @@ function hashdpassword(password){
     const saltRounds = 10
     return bcrypt.hash(password,saltRounds)
   }
-module.exports={ createUser,loginUser }
+module.exports={createUser,loginUser}
