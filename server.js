@@ -1,3 +1,4 @@
+
 require('dotenv').config()
 
 const bcrypt = require('bcrypt');
@@ -6,9 +7,13 @@ const mongoose = require('mongoose');
 const http = require('http');
 const cors = require('cors')
 const app = express();
+const bodyParser = require('body-parser')
+const multer=require('multer')
+const upload=multer().single("image")
 const port = 3000
-const {createUser,loginUser} = require("./controllers/user");
-const { getSauces } = require("./controllers/sauces");
+
+const userRoutes = require('./routes/user')
+const sauceRoutes = require('./routes/sauce')
 const userSchema=require('./models/usermodel')
 const User=mongoose.model("User",userSchema)
 
@@ -22,13 +27,13 @@ console.log("variable d'enverenement:",process.env.MOTDEPASSE)
 //middelware
 app.use(cors())
 app.use(express.json())
-//const{ authenticateUser }=require("./middelware/auth")
+app.use( bodyParser .json())
+//const{authenticateUser}=require("./middelware/auth")
 
 //routes
-app.post('/api/auth/signup',createUser)
-app.post('/api/auth/login',loginUser)
-app.get('/api/sauces',getSauces)
-//app.post('/api/sauces',createSauces)
+
+app.use('/api/auth/',userRoutes)
+app.use('/api/sauces', sauceRoutes);
 
 
 
@@ -44,4 +49,4 @@ mongoose.connect(`mongodb+srv://tehami:${MOT}@cluster0.uqmi5.mongodb.net/?retryW
  app.listen(port, () => {
    console.log("Example app listening on port "+port)
  })
- 
+ module.exports = app;
