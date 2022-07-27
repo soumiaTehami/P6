@@ -1,6 +1,6 @@
 
-require('dotenv').config()
-
+require('dotenv').config({ path: process.cwd() + '/.env' })
+const path = require('path');
 const bcrypt = require('bcrypt');
 const express = require('express');
 const mongoose = require('mongoose');
@@ -27,11 +27,11 @@ console.log("variable d'enverenement:",process.env.MOTDEPASSE)
 //middelware
 app.use(cors())
 app.use(express.json())
-app.use( bodyParser .json())
+
 //const{authenticateUser}=require("./middelware/auth")
 
 //routes
-
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use('/api/auth/',userRoutes)
 app.use('/api/sauces', sauceRoutes);
 
@@ -45,6 +45,14 @@ mongoose.connect(`mongodb+srv://tehami:${MOT}@cluster0.uqmi5.mongodb.net/?retryW
     else { console.log("Connexion à MongoDB réussie !")}
   });
 
+  // Définition de headers pour éviters les erreurs de CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
+});
+app.use(bodyParser.json());
 //server
  app.listen(port, () => {
    console.log("Example app listening on port "+port)
