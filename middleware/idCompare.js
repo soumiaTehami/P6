@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv').config({ path: process.cwd() + '/.env' });
 const jwt = require('jsonwebtoken');
 const Sauce = require('../models/sauce');
 

@@ -1,6 +1,5 @@
-const jwt = require('jsonwebtoken');
-const Sauce = require('../models/Sauce');
 
+const Sauce = require('../models/Sauce');
 
 // Fonction pour la création d'une sauce
 function getSauces (req, res, next) {
@@ -45,20 +44,19 @@ function createSauce  (req, res, next){
 		.catch(error => res.status(400).json({ error }));
   };
 
- function deleteSauce 
- (req, res, next)  {
+ function deleteSauce (req, res, next)  {
 	Sauce.findOne({_id: req.params.id})
-	  .then(sauce => {
-		// Récupération du nom du fichier
-		const filename = sauce.imageUrl.split('/images/')[1];
-		// On efface le fichier (unlink)
-		fs.unlink(`images/${filename}`, () => {
-		  Sauce.deleteOne({ _id: req.params.id })
-		  .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
-		  .catch(error => res.status(400).json({ error }));
-		});
-	  })
-	  .catch(error => res.status(500).json({ error }));
+    .then(sauce => {
+      // Récupération du nom du fichier
+      const filename = sauce.imageUrl.split('/images/')[1];
+      // On efface le fichier (unlink)
+      fs.unlink(`images/${filename}`, () => {
+        Sauce.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet supprimé !'}))
+        .catch(error => res.status(400).json({ error }));
+      });
+    })
+    .catch(error => res.status(500).json({ error }));
   };
   // Création like ou dislike (Post/:id/like)
  function likeOrDislike (req, res, next)  {
