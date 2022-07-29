@@ -1,6 +1,6 @@
 
 const Sauce = require('../models/Sauce');
-
+const fs = require('fs');
 // Fonction pour la création d'une sauce
 function getSauces (req, res, next) {
 	Sauce.find()
