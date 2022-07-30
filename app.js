@@ -8,18 +8,13 @@ const http = require('http');
 const cors = require('cors')
 const app = express();
 const bodyParser = require('body-parser')
-const multer=require('multer')
-const upload=multer().single("image")
 const port = 3000
-const helmet = require("helmet");
 const userRoutes = require('./routes/user')
 const sauceRoutes = require('./routes/sauce')
 const userSchema=require('./models/usermodel')
-const User=mongoose.model("User",userSchema)
-
-const MOT=process.env.MOTDEPASSE
-const jwt = require('jsonwebtoken');
-console.log("variable d'enverenement:",process.env.MOTDEPASSE) 
+const MOT=process.env.DB_MOTDEPASSE
+const username=process.env.DB_user
+console.log("variable d'enverenement:",process.env.DB_MOTDEPASSE) 
 
 
 //middelware
@@ -37,7 +32,7 @@ app.use('/api/sauces', sauceRoutes);
 
 
 // Connexion à la base de données avec mongoose
-mongoose.connect(`mongodb+srv://tehami:${MOT}@cluster0.uqmi5.mongodb.net/?retryWrites=true&w=majority`, function(err) {
+mongoose.connect(`mongodb+srv://${username}:${MOT}@cluster0.uqmi5.mongodb.net/?retryWrites=true&w=majority`, function(err) {
     if (err) { throw err;
     }
     else { console.log("Connexion à MongoDB réussie !")}
@@ -51,7 +46,7 @@ app.use((req, res, next) => {
 });
 app.use(bodyParser.json());
 //server
- app.listen(port, () => {
-   console.log("Example app listening on port "+port)
- })
+app.listen(port, () => {
+  console.log("Example app listening on port "+port)
+})
  module.exports = app;

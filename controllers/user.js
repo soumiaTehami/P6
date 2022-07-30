@@ -16,7 +16,7 @@ async function loginUser(req,res){
     if (!passewordOk){
       res.status(403).send({ message:"mot de passe incorrect" })
     }
-    //const token=createToken(email)
+    
     res.status(200).send({  userId: user._id,
       token: jwt.sign(
           { userId: user._id },
