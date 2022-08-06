@@ -1,50 +1,55 @@
-// Création du serveur
+/*j'importe dotenv pour gérer les variables d'environnement
+.env*/
+require('dotenv').config({ path: process.cwd() + '/.env' })
+//Accès au chemin de notre système de fichiers
+const path = require('path');
+//j'importe express pour créer plus facilement mon server
+const express = require('express');
+//j'importe mongosse - gestion de ma base de données
+const mongoose = require('mongoose');
 const http = require('http');
-const app = require('./app');
+const cors = require('cors')
+const app = express();
+const bodyParser = require('body-parser')
+const port = 3000
+const userRoutes = require('./routes/user')
+const sauceRoutes = require('./routes/sauce')
+const MOT=process.env.DB_MOTDEPASSE
+const username=process.env.DB_user
+console.log("variable d'enverenement:",process.env.DB_MOTDEPASSE) 
 
-// Renvoie d'un port valide
-const normalizePort = val => {
-  const port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
-  return false;
-};
-const port = normalizePort(process.env.PORT || '3000');
-app.set('port', port);
+//middelware
+app.use(cors())
+app.use(express.json())
 
-// Recherche des différentes erreurs et comment les gérer
-const errorHandler = error => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges.');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use.');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
-};
 
-const server = http.createServer(app);
+//routes
+app.use("/files", express.static(path.join(__dirname, "files")));
+app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/api/auth/',userRoutes)
+app.use('/api/sauces', sauceRoutes);
 
-server.on('error', errorHandler);
-server.on('listening', () => {
-  const address = server.address();
-  const bind = typeof address === 'string' ? 'pipe ' + address : 'port ' + port;
-  console.log('Listening on ' + bind);
+
+
+
+// Connexion à la base de données avec mongoose
+mongoose.connect(`mongodb+srv://${username}:${MOT}@cluster0.uqmi5.mongodb.net/?retryWrites=true&w=majority`, function(err) {
+    if (err) { throw err;
+    }
+    else { console.log("Connexion à MongoDB réussie !")}
+  });
+  // Définition de headers pour éviters les erreurs de CORS
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+  next();
 });
-
-server.listen(port);
+app.use(bodyParser.json());
+//server
+app.listen(port, () => {
+  console.log("Example app listening on port "+port)
+})
+//j'exporte mon application express
+ module.exports = app;

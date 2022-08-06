@@ -20,7 +20,7 @@ async function loginUser(req,res){
     res.status(200).send({  userId: user._id,
       token: jwt.sign(
           { userId: user._id },
-          'RANDOM_TOKEN_SECRET',
+          process.env.TOKEN_SECRET,
           { expiresIn: '24h' }
       )})
     
